@@ -8,14 +8,16 @@ Created on Sat Mar 20 15:48:48 2021
 ''' 
     ustensils to extract data via requests class
     '''
+import datetime 
+import requests 
+from requests import get 
 
-
-class utils(object): 
+class CMC_utils(object): 
         
     def __init__(self, *args, **kwargs): 
         pass
     
-    def get_url_data(url): 
+    def get_url_data(self, url): 
         ''' 
         member function to download the data off input URL 
         ''' 
@@ -25,25 +27,25 @@ class utils(object):
             return response 
         except Exception as e: 
             if hasattr(e, "message"): 
-                print()"Error message (get_url_data) :", e.message) 
+                print("Error message (get_url_data) :", e.message) 
             else: 
                 print("Error message (get_url_data) :", e)
         raise e 
         
-    def get_coid_id(coin_code): 
+    def get_coin_id(self, coin_code): 
         ''' 
         fetch name(id) of crypto from given code 
         return coin-id for crypto equivalent on coinmarketcap 
         ''' 
         
-         api_url = "https://web-api.coinmarketcap.com/v1/cryptocurrency/map?symbol={coin_code}".format(
+        api_url = "https://web-api.coinmarketcap.com/v1/cryptocurrency/map?symbol={coin_code}".format(
                      coin_code=coin_code)
          
-         try: 
-             json_data = get_url_data(api_url).json()
-             error_code = json_data["status"]["error_code"]
-             if error_code == 0 : 
-                 return json_data["data"][0]["slug"]
+        try: 
+            json_data = self.get_url_data(api_url).json()
+            error_code = json_data["status"]["error_code"]
+            if error_code == 0 : 
+                return json_data["data"][0]["slug"]
             if error_code == 400: 
                 raise InvalidCoinCode("'{}' coin code invalid on cmc".format(coin_code))
             else: 
@@ -57,15 +59,15 @@ class utils(object):
             else: 
                 print("Error message: ", e)
                 
-    def download_coin_data(coin_code, start_date, end_date):
-    """
-    Download HTML price history for the specified cryptocurrency and time range from CoinMarketCap.
-    :param coin_code: coin code of a cryptocurrency e.g. btc
-    :param start_date: date since when to scrape data (in the format of dd-mm-yyyy)
-    :param end_date: date to which scrape the data (in the format of dd-mm-yyyy)
-    :return: returns html of the webpage having historical data of cryptocurrency for certain duration
-    """
-
+    def download_coin_data(self, coin_code, start_date, end_date):
+        """
+        Download HTML price history for the specified cryptocurrency and time range from CoinMarketCap.
+        :param coin_code: coin code of a cryptocurrency e.g. btc
+        :param start_date: date since when to scrape data (in the format of dd-mm-yyyy)
+        :param end_date: date to which scrape the data (in the format of dd-mm-yyyy)
+        :return: returns html of the webpage having historical data of cryptocurrency for certain duration
+        """
+    
         if start_date is None:
         # default start date on coinmarketcap.com
             start_date = "28-4-2013"
@@ -74,7 +76,7 @@ class utils(object):
             yesterday = datetime.date.today() - datetime.timedelta(1)
             end_date = yesterday.strftime("%d-%m-%Y")
 
-        coin_id = get_coin_id(coin_code)
+        coin_id = self.get_coin_id(coin_code)
 
         # convert the dates to timestamp for the url
         start_date_timestamp = int(
@@ -96,7 +98,7 @@ class utils(object):
             )
 
         try:
-            json_data = get_url_data(api_url).json()
+            json_data = self.get_url_data(api_url).json()
             if json_data["status"]["error_code"] != 0:
                 raise Exception(json_data["status"]["error_message"])
             return json_data
@@ -114,7 +116,7 @@ class utils(object):
                 print("Error message (download_data) :", e)
 
 
-    def _replace(s, bad_chars):
+    def _replace(self, s, bad_chars):
         if sys.version_info > (3, 0):
         # For Python 3
             without_bad_chars = str.maketrans("", "", bad_chars)

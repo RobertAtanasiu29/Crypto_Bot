@@ -16,8 +16,9 @@ import warnings
 from datetime import datetime
 import sys 
 
-sys.path.insert(1, os.getcwd() + '/func')
-from crypto_bot.src.func import utils, time_func
+cwd = os.getcwd()
+sys.path.append(cwd.replace("cc", "func"))
+from utils import CMC_utils 
 
 
 class CmcScraper(object):
@@ -48,6 +49,7 @@ class CmcScraper(object):
         self.order_ascending = order_ascending
         self.headers = ["Date", "Open", "High", "Low", "Close", "Volume", "Market Cap"]
         self.rows = []
+        self.utils = CMC_utils();
 
         # enable all_time download if start_time or end_time is not given
         if not (self.start_date and self.end_date):
@@ -80,7 +82,7 @@ class CmcScraper(object):
         if self.all_time:
             self.start_date, self.end_date = None, None
 
-        coin_data = download_coin_data(self.coin_code, self.start_date, self.end_date)
+        coin_data = self.utils.download_coin_data(self.coin_code, self.start_date, self.end_date)
 
         for _row in coin_data["data"]["quotes"]:
 
@@ -229,7 +231,6 @@ class CmcScraper(object):
 
         if not name.endswith(".{}".format(format)):
             name += ".{}".format(format)
-
         _file = "{0}/{1}".format(path, name)
 
         try:

@@ -5,7 +5,7 @@ Created on Fri Mar 19 23:51:14 2021
 @author: Robert Atanasiu
 """
 
-!pip install requests 
+
 import requests 
 import json 
 import time 
@@ -194,4 +194,4 @@ class CBPscrapper(object):
       return data
 
 
-new = HistoricalData('ETH-USD',300,'2020-06-01-00-00').retrieve_data()
+#new = CBPscrapper('BTC-USD',86400,'2020-06-01-00-00').retrieve_data()
